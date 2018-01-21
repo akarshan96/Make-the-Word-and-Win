@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Welcome, {{ user.username }}!</h2>
+  <h2>Prize Money : ₹{{ Prize }}</h2>
+  <h2>Your Earnings : {{ Fields.earning }}</h2>
+  <h2>Your Pulls : {{ Fields.pulls }}</h2>
+  <h2>Word of the day : {{ WordOfTheDay }}</h2>
+  <h2>Letters Found : {{ Fields.lettersfound }}</h2> 
+  <input type="button" value="Pull the letter" id="demo"/>
+  <h2>Top Players</h2>
+  {% for players in Top %}
+     <h2>{{players.user}}<h2>
+{%endfor%}
+  
+  <script>
+  function CallRandom()
+  {
+    $.ajax({
+        url: "http://127.0.0.1:8000/generaterandom",
+        type: "GET",
+        async: true,
+        data: {  csrfmiddlewaretoken: "{{ csrf_token }}"},
+        timeout:0,
+        success: function(data){
+          var a = JSON.stringify(data.status)
+          if(a === '"won"') {
+            alert("Congrats, You Won")
+            document.getElementById("demo").disabled = true;
+          }
+          else {
+              alert("Letter Found : " + JSON.stringify(data.status))
+              setTimeout(function(){
+                window.location.reload(1);
+            }, 10000);
+          }
+        }
+    });
+  }
+
+  document.getElementById("demo").addEventListener("click", CallRandom); 
+
+  </script>
+{% endblock %}
