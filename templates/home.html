@@ -2,11 +2,11 @@
 
 {% block content %}
   <h2>Welcome, {{ user.username }}!</h2>
-  <h2>Prize Money : ₹{{ Prize }}</h2>
-  <h2>Your Earnings : {{ Fields.earning }}</h2>
-  <h2>Your Pulls : {{ Fields.pulls }}</h2>
+  <h2 id="money">Prize Money : ₹{{ Prize }}</h2>
+  <h2 id="earn">Your Earnings : ₹{{ Fields.earning }}</h2>
+  <h2 id="pull">Your Pulls : {{ Fields.pulls }}</h2>
   <h2>Word of the day : {{ WordOfTheDay }}</h2>
-  <h2>Letters Found : {{ Fields.lettersfound }}</h2> 
+  <h2 id="lettersfound">Letters Found : {{ Fields.lettersfound }}</h2> 
   <input type="button" value="Pull the letter" id="demo"/>
   <h2>Top Players</h2>
   {% for players in Top %}
@@ -30,11 +30,30 @@
           }
           else {
               alert("Letter Found : " + JSON.stringify(data.status))
-              setTimeout(function(){
-                window.location.reload(1);
-            }, 10000);
           }
         }
+    });
+  }
+
+  setInterval(ajaxCall, 1000); //300000 MS == 5 minutes
+
+  function ajaxCall() 
+  {
+     $.ajax({
+        url: "http://127.0.0.1:8000/updates",
+        type: "GET",
+        async: true,
+        data: {  csrfmiddlewaretoken: "{{ csrf_token }}"},
+        timeout:0,
+        success: function(data){
+          console.log(JSON.stringify(data))
+          document.getElementById("money").innerHTML = 'Prize Money : ₹' + data.prize ;
+          document.getElementById("earn").innerHTML = 'Your Earnings : ₹' + data.earning ;
+          document.getElementById("pull").innerHTML = 'Your Pulls : ' + data.pulls ;
+          document.getElementById("lettersfound").innerHTML = 'Letters Found : ' + data.lettersfound ;
+
+        }
+
     });
   }
 

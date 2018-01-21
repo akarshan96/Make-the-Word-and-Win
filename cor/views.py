@@ -126,3 +126,16 @@ def decide_probabity(wordoftheday, allfeilds):
             return 0.15
         else:
             return 0.20
+
+def updates(request):
+    fields = AllFields.objects.all().filter(user = request.user)
+    earning = fields[0].earning
+    lettersfound = fields[0].lettersfound
+    pulls = fields[0].pulls
+    print (fields[0].pulls)
+    moneypool = Pool.objects.all() 
+    prize = int(20/100 * int(moneypool[0].moneypooled))
+    jsonstring = {'earning' : earning, 'lettersfound' : lettersfound, 'pulls' : pulls , 'prize' : prize}
+
+    return JsonResponse(jsonstring)
+
